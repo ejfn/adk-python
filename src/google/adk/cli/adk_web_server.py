@@ -1096,7 +1096,14 @@ class AdkWebServer:
               status_code=400, detail=f"Eval set `{eval_set_id}` not found."
           )
 
-        root_agent = self.agent_loader.load_agent(app_name)
+        agent_or_app = self.agent_loader.load_agent(app_name)
+        # The loader may return an App; unwrap to its root agent so the graph builder
+        # receives a BaseAgent instance.
+        root_agent = (
+            agent_or_app.root_agent
+            if isinstance(agent_or_app, App)
+            else agent_or_app
+        )
 
         eval_case_results = []
 
